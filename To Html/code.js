@@ -73,14 +73,30 @@ function getElementInfo(input) {
 function createTextBasedHtml(node) {
     let text = getText(node);
     let element = getElementInfo(node.name);
-    let childHtml = `<${element.element} id="${element.id}" class="${element.cl}">`;
+    let id;
+    let classes;
+    if (id) {
+        id = `id="${element.id}"`;
+    }
+    if (classes) {
+        classes = `class="${element.cl}"`;
+    }
+    let childHtml = `<${element.element} ${id ? id : ""} ${classes ? classes : ""}>`;
     childHtml += text;
     childHtml += `</${element.element}>`;
     return childHtml;
 }
 function createFrameBasedHtml(node) {
     let element = getElementInfo(node.name);
-    let containerHtml = `<${element.element} id="${element.id}" class="${element.cl}">`;
+    let id;
+    let classes;
+    if (id) {
+        id = `id="${element.id}"`;
+    }
+    if (classes) {
+        classes = `class="${element.cl}"`;
+    }
+    let containerHtml = `<${element.element} ${id ? id : ""} ${classes ? classes : ""}>`;
     // Do check for children
     if (node.children.length > 0) {
         for (const innerChild of node.children) {
