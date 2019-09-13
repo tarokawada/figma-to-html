@@ -1,0 +1,14 @@
+<h2>Generated Html from Layers</h2>
+<button id="generate-html">Generate</button>
+
+<textarea id="generated-html"></textarea>
+<script>
+  document.getElementById("generate-html").onclick = () => {
+    parent.postMessage({ pluginMessage: { type: "generate-html" } }, "*");
+  };
+
+  onmessage = event => {
+    document.getElementById("generated-html").innerHTML =
+      event.data.pluginMessage;
+  };
+</script>
