@@ -31,12 +31,18 @@ figma.ui.onmessage = msg => {
     let parentHtml = `<${parent.element} id="${parent.id}" class="${parent.cl}">`;
     for (let index = selection.children.length - 1; index >= 0; index--) {
       const child: any = selection.children[index];
-      if (selection.children[index].type === "TEXT") {
+      if (child.type === "TEXT") {
         const childHtml = createTextBasedHtml(child);
         parentHtml += childHtml;
-      } else if (selection.children[index].type === "FRAME") {
+      } else if (child.type === "FRAME") {
         const childHtml = createFrameBasedHtml(child);
         parentHtml += childHtml;
+      } else if (child.type === "RECTANGLE") {
+        const ifImage = checkIfImage(child);
+        if (ifImage) {
+          const childHtml = createImageBasedHtml(child);
+          parentHtml += childHtml;
+        }
       }
     }
 
@@ -108,4 +114,12 @@ function createFrameBasedHtml(node: FrameNode) {
 
   containerHtml += `</${element.element}>`;
   return containerHtml;
+}
+
+function createImageBasedHtml(node: RectangleNode) {
+  return `<img src="" />`;
+}
+
+function checkIfImage(node: RectangleNode) {
+  return node.fills[0].type === "IMAGE" ? true : false;
 }
