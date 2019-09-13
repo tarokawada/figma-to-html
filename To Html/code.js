@@ -16,36 +16,18 @@ figma.ui.onmessage = msg => {
         }
         let parent = getElementInfo(selection.name);
         let parentHtml = `<${parent.element} id="${parent.id}" class="${parent.cl}">`;
-        for (const child of selection.children) {
-            if (child.type === "TEXT") {
-                let text = getText(child);
-                let element = getElementInfo(child.name);
-                let childHtml = `<${element.element} id="${element.id}" class="${element.cl}">`;
-                childHtml += text;
-                childHtml += `</${element.element}>`;
+        for (let index = selection.children.length - 1; index >= 0; index--) {
+            const child = selection.children[index];
+            if (selection.children[index].type === "TEXT") {
+                const childHtml = createTextBasedHtml(child);
                 parentHtml += childHtml;
             }
-            else if (child.type === "FRAME") {
-                let element = getElementInfo(child.name);
-                let childHtml = `<${element.element} id="${element.id}" class="${element.cl}">`;
-                if (child.children.length > 0) {
-                    for (const innerChild of child.children) {
-                        if (innerChild.type === "TEXT") {
-                            let text = getText(innerChild);
-                            let element = getElementInfo(innerChild.name);
-                            let innerChildHtml = `<${element.element} id="${element.id}" class="${element.cl}">`;
-                            innerChildHtml += text;
-                            innerChildHtml += `</${element.element}>`;
-                            childHtml += innerChildHtml;
-                        }
-                    }
-                }
-                childHtml += `</${element.element}>`;
+            else if (selection.children[index].type === "FRAME") {
+                const childHtml = createFrameBasedHtml(child);
                 parentHtml += childHtml;
             }
         }
         parentHtml += `</${parent.element}>`;
-        console.log(parentHtml);
         figma.ui.postMessage(parentHtml);
     }
     // Make sure to close the plugin when you're done. Otherwise the plugin will
@@ -69,7 +51,6 @@ function getElementInfo(input) {
         .split(",");
     for (let x = 0; x < filteredInput.length; x++) {
         if (x == 0) {
-            console.log("First String: " + filteredInput[x]);
             result["element"] = filteredInput[x];
             continue;
         }
@@ -81,4 +62,31 @@ function getElementInfo(input) {
         }
     }
     return result;
+}
+function createTextBasedHtml(node) {
+    let text = getText(node);
+    let element = getElementInfo(node.name);
+    let childHtml = `<${element.element} id="${element.id}" class="${element.cl}">`;
+    childHtml += text;
+    childHtml += `</${element.element}>`;
+    return childHtml;
+}
+function createFrameBasedHtml(node) {
+    let element = getElementInfo(node.name);
+    let containerHtml = `<${element.element} id="${element.id}" class="${element.cl}">`;
+    // Do check for children
+    if (node.children.length > 0) {
+        for (const innerChild of node.children) {
+            if (innerChild.type === "TEXT") {
+                let text = createTextBasedHtml(innerChild);
+                containerHtml += text;
+            }
+            else if (innerChild.type === "FRAME") {
+                let container = createFrameBasedHtml(innerChild);
+                containerHtml += container;
+            }
+        }
+    }
+    containerHtml += `</${element.element}>`;
+    return containerHtml;
 }
