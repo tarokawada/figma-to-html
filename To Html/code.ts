@@ -89,17 +89,7 @@ function getElementInfo(input: string) {
 function createTextBasedHtml(node: TextNode) {
   let text = getText(node);
   let element = getElementInfo(node.name);
-  let id;
-  let classes;
-  if (id) {
-    id = `id="${element.id}"`;
-  }
-  if (classes) {
-    classes = `class="${element.cl}"`;
-  }
-  let childHtml = `<${element.element} ${id ? id : ""} ${
-    classes ? classes : ""
-  }>`;
+  let childHtml = htmlStartingTag(element);
   childHtml += text;
   childHtml += `</${element.element}>`;
   return childHtml;
@@ -107,17 +97,7 @@ function createTextBasedHtml(node: TextNode) {
 
 function createFrameBasedHtml(node: FrameNode) {
   let element = getElementInfo(node.name);
-  let id;
-  let classes;
-  if (id) {
-    id = `id="${element.id}"`;
-  }
-  if (classes) {
-    classes = `class="${element.cl}"`;
-  }
-  let containerHtml = `<${element.element} ${id ? id : ""} ${
-    classes ? classes : ""
-  }>`;
+  let containerHtml = htmlStartingTag(element);
   // Do check for children
   if (node.children.length > 0) {
     for (const innerChild of node.children) {
@@ -136,9 +116,21 @@ function createFrameBasedHtml(node: FrameNode) {
 }
 
 function createImageBasedHtml(node: RectangleNode) {
-  return `<img src="" />`;
+  return `<img src="" alt="${node.name}"/>`;
 }
 
 function checkIfImage(node: RectangleNode) {
   return node.fills[0].type === "IMAGE" ? true : false;
+}
+
+function htmlStartingTag(element: ElementInfo) {
+  let id;
+  let classes;
+  if (id) {
+    id = `id="${element.id}"`;
+  }
+  if (classes) {
+    classes = `class="${element.cl}"`;
+  }
+  return `<${element.element} ${id ? id : ""} ${classes ? classes : ""}>`;
 }

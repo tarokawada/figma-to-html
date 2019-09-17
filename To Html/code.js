@@ -73,30 +73,14 @@ function getElementInfo(input) {
 function createTextBasedHtml(node) {
     let text = getText(node);
     let element = getElementInfo(node.name);
-    let id;
-    let classes;
-    if (id) {
-        id = `id="${element.id}"`;
-    }
-    if (classes) {
-        classes = `class="${element.cl}"`;
-    }
-    let childHtml = `<${element.element} ${id ? id : ""} ${classes ? classes : ""}>`;
+    let childHtml = htmlStartingTag(element);
     childHtml += text;
     childHtml += `</${element.element}>`;
     return childHtml;
 }
 function createFrameBasedHtml(node) {
     let element = getElementInfo(node.name);
-    let id;
-    let classes;
-    if (id) {
-        id = `id="${element.id}"`;
-    }
-    if (classes) {
-        classes = `class="${element.cl}"`;
-    }
-    let containerHtml = `<${element.element} ${id ? id : ""} ${classes ? classes : ""}>`;
+    let containerHtml = htmlStartingTag(element);
     // Do check for children
     if (node.children.length > 0) {
         for (const innerChild of node.children) {
@@ -114,8 +98,19 @@ function createFrameBasedHtml(node) {
     return containerHtml;
 }
 function createImageBasedHtml(node) {
-    return `<img src="" />`;
+    return `<img src="" alt="${node.name}"/>`;
 }
 function checkIfImage(node) {
     return node.fills[0].type === "IMAGE" ? true : false;
+}
+function htmlStartingTag(element) {
+    let id;
+    let classes;
+    if (id) {
+        id = `id="${element.id}"`;
+    }
+    if (classes) {
+        classes = `class="${element.cl}"`;
+    }
+    return `<${element.element} ${id ? id : ""} ${classes ? classes : ""}>`;
 }

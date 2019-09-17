@@ -1,9 +1,47 @@
-<style></style>
+<head>
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+    rel="stylesheet"
+  />
 
-<h2>Generated Html from Layers</h2>
-<button id="generate-html">Generate</button>
+  <style>
+    * {
+      font-family: "Roboto", sans-serif;
+      font-size: 14px;
+    }
 
-<textarea id="generated-html"></textarea>
+    .to_html__content {
+      display: flex;
+      min-width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .to_html__content button {
+      border: none;
+      background: none;
+      padding: 0;
+      color: cornflowerblue;
+      margin-bottom: 14px;
+      font-weight: bold;
+    }
+
+    .to_html__content #copy-html {
+      margin-left: 20px;
+    }
+
+    .to_html__content textarea {
+      width: 100%;
+      min-height: 220px;
+    }
+  </style>
+</head>
+
+<div class="to_html__content">
+  <button id="generate-html">Generate</button>
+  <button id="copy-html" data-clipboard-target="#generated-html">Copy</button>
+  <textarea id="generated-html"></textarea>
+</div>
+
 <script>
   document.getElementById("generate-html").onclick = () => {
     parent.postMessage({ pluginMessage: { type: "generate-html" } }, "*");
@@ -12,5 +50,11 @@
   onmessage = event => {
     document.getElementById("generated-html").innerHTML =
       event.data.pluginMessage;
+  };
+
+  document.getElementById("copy-html").onclick = () => {
+    const textArea = document.getElementById("generated-html");
+    textArea.select();
+    document.execCommand("copy");
   };
 </script>
